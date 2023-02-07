@@ -1,0 +1,382 @@
+#1 [internal] load .dockerignore
+#1 transferring context: 132B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 1.13kB done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/yg397/thrift-microservice-deps:xenial
+#3 DONE 0.7s
+
+#4 [internal] load metadata for docker.io/library/ubuntu:16.04
+#4 DONE 0.7s
+
+#5 [builder 1/4] FROM docker.io/yg397/thrift-microservice-deps:xenial@sha256:66d016da04e1d584e73cae8826a135610c9bcbd7f338d01e86680ffda9c5614f
+#5 CACHED
+
+#6 [stage-1 1/5] FROM docker.io/library/ubuntu:16.04@sha256:1f1a2d56de1d604801a9671f301190704c25d604a416f59e03c04f5c6ffee0d6
+#6 CACHED
+
+#7 [internal] load build context
+#7 transferring context: 8.78kB done
+#7 DONE 0.0s
+
+#8 [builder 2/4] RUN cd /tmp/redis-plus-plus&& sed -i '/Transaction transaction/i\\    ShardsPool* get_shards_pool(){\n        return &_pool;\n    }\n'    src/sw/redis++/redis_cluster.h && cmake -DREDIS_PLUS_PLUS_USE_TLS=ON . && make -j$(nproc) && make install
+#8 0.277 -- redis-plus-plus version: 1.2.3
+#8 0.279 -- redis-plus-plus build type: Release
+#8 0.279 -- redis-plus-plus build with CXX standard: c++11
+#8 0.279 -- redis-plus-plus TLS support: ON
+#8 0.281 -- redis-plus-plus build static library: ON
+#8 0.281 -- redis-plus-plus build static library with position independent code: ON
+#8 0.281 -- redis-plus-plus build shared library: ON
+#8 0.281 -- redis-plus-plus build test: ON
+#8 0.290 -- Configuring done
+#8 0.298 -- Generating done
+#8 0.298 -- Build files have been written to: /tmp/redis-plus-plus
+#8 0.321 Scanning dependencies of target redis++
+#8 0.321 Scanning dependencies of target redis++_static
+#8 0.327 [  2%] Building CXX object CMakeFiles/redis++_static.dir/src/sw/redis++/redis_cluster.cpp.o
+#8 0.327 [  5%] Building CXX object CMakeFiles/redis++.dir/src/sw/redis++/redis_cluster.cpp.o
+#8 1.946 [  8%] Linking CXX shared library libredis++.so
+#8 1.955 [ 11%] Linking CXX static library libredis++.a
+#8 1.975 [ 52%] Built target redis++_static
+#8 1.984 Scanning dependencies of target test_redis++
+#8 1.990 [ 55%] Building CXX object test/CMakeFiles/test_redis++.dir/src/sw/redis++/test_main.cpp.o
+#8 2.000 [ 97%] Built target redis++
+#8 13.82 [100%] Linking CXX executable test_redis++
+#8 13.91 [100%] Built target test_redis++
+#8 13.95 [ 47%] Built target redis++_static
+#8 13.96 [ 94%] Built target redis++
+#8 13.98 [100%] Built target test_redis++
+#8 13.99 Install the project...
+#8 14.00 -- Install configuration: "Release"
+#8 14.00 -- Installing: /usr/local/lib/libredis++.a
+#8 14.00 -- Installing: /usr/local/lib/libredis++.so.1.2.3
+#8 14.00 -- Up-to-date: /usr/local/lib/libredis++.so.1
+#8 14.00 -- Up-to-date: /usr/local/lib/libredis++.so
+#8 14.00 -- Set runtime path of "/usr/local/lib/libredis++.so.1.2.3" to ""
+#8 14.00 -- Up-to-date: /usr/local/share/cmake/redis++/redis++-targets.cmake
+#8 14.00 -- Installing: /usr/local/share/cmake/redis++/redis++-targets-release.cmake
+#8 14.00 -- Up-to-date: /usr/local/include/sw/redis++/redis.hpp
+#8 14.01 -- Up-to-date: /usr/local/include/sw/redis++/connection_pool.h
+#8 14.01 -- Up-to-date: /usr/local/include/sw/redis++/shards_pool.h
+#8 14.01 -- Up-to-date: /usr/local/include/sw/redis++/command_options.h
+#8 14.01 -- Up-to-date: /usr/local/include/sw/redis++/connection.h
+#8 14.01 -- Up-to-date: /usr/local/include/sw/redis++/sentinel.h
+#8 14.01 -- Up-to-date: /usr/local/include/sw/redis++/command_args.h
+#8 14.01 -- Up-to-date: /usr/local/include/sw/redis++/errors.h
+#8 14.01 -- Up-to-date: /usr/local/include/sw/redis++/pipeline.h
+#8 14.01 -- Up-to-date: /usr/local/include/sw/redis++/transaction.h
+#8 14.01 -- Up-to-date: /usr/local/include/sw/redis++/queued_redis.hpp
+#8 14.01 -- Up-to-date: /usr/local/include/sw/redis++/queued_redis.h
+#8 14.01 -- Up-to-date: /usr/local/include/sw/redis++/redis++.h
+#8 14.01 -- Up-to-date: /usr/local/include/sw/redis++/command.h
+#8 14.01 -- Installing: /usr/local/include/sw/redis++/redis_cluster.h
+#8 14.01 -- Up-to-date: /usr/local/include/sw/redis++/redis.h
+#8 14.02 -- Up-to-date: /usr/local/include/sw/redis++/reply.h
+#8 14.02 -- Up-to-date: /usr/local/include/sw/redis++/shards.h
+#8 14.02 -- Up-to-date: /usr/local/include/sw/redis++/utils.h
+#8 14.02 -- Up-to-date: /usr/local/include/sw/redis++/subscriber.h
+#8 14.02 -- Up-to-date: /usr/local/include/sw/redis++/redis_cluster.hpp
+#8 14.02 -- Up-to-date: /usr/local/include/sw/redis++/tls.h
+#8 14.02 -- Up-to-date: /usr/local/share/cmake/redis++/redis++-config.cmake
+#8 14.02 -- Up-to-date: /usr/local/share/cmake/redis++/redis++-config-version.cmake
+#8 14.02 -- Up-to-date: /usr/local/lib/pkgconfig/redis++.pc
+#8 DONE 14.0s
+
+#9 [builder 3/4] COPY ./ /social-network-microservices
+#9 DONE 0.1s
+
+#10 [builder 4/4] RUN cd /social-network-microservices     && mkdir -p build     && cd build     && cmake -DCMAKE_BUILD_TYPE=Debug ..     && make -j$(nproc)     && make install
+#10 0.505 -- The C compiler identification is GNU 5.4.0
+#10 0.536 -- The CXX compiler identification is GNU 5.4.0
+#10 0.538 -- Check for working C compiler: /usr/bin/cc
+#10 0.604 -- Check for working C compiler: /usr/bin/cc -- works
+#10 0.605 -- Detecting C compiler ABI info
+#10 0.664 -- Detecting C compiler ABI info - done
+#10 0.667 -- Detecting C compile features
+#10 0.847 -- Detecting C compile features - done
+#10 0.850 -- Check for working CXX compiler: /usr/bin/c++
+#10 0.939 -- Check for working CXX compiler: /usr/bin/c++ -- works
+#10 0.939 -- Detecting CXX compiler ABI info
+#10 1.010 -- Detecting CXX compiler ABI info - done
+#10 1.013 -- Detecting CXX compile features
+#10 1.221 -- Detecting CXX compile features - done
+#10 1.224 -- Found LIBMEMCACHED: /usr/lib/x86_64-linux-gnu/libmemcached.so  
+#10 1.224 -- THRIFT_HOME: 
+#10 1.226 -- Thrift version: Thrift version 0.12.0
+#10 1.227 -- Found libevent: /usr/lib/x86_64-linux-gnu/libevent.so
+#10 1.228 -- Found nlohmann_json: /usr/local/lib/cmake/nlohmann_json/nlohmann_jsonConfig.cmake (found suitable version "3.6.1", minimum required is "3.5.0") 
+#10 1.229 -- Looking for pthread.h
+#10 1.265 -- Looking for pthread.h - found
+#10 1.266 -- Looking for pthread_create
+#10 1.302 -- Looking for pthread_create - not found
+#10 1.302 -- Looking for pthread_create in pthreads
+#10 1.333 -- Looking for pthread_create in pthreads - not found
+#10 1.333 -- Looking for pthread_create in pthread
+#10 1.369 -- Looking for pthread_create in pthread - found
+#10 1.370 -- Found Threads: TRUE  
+#10 1.393 -- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libssl.so;/usr/lib/x86_64-linux-gnu/libcrypto.so (found version "1.0.2g") 
+#10 1.407 -- Boost version: 1.58.0
+#10 1.407 -- Found the following Boost libraries:
+#10 1.407 --   log
+#10 1.407 --   log_setup
+#10 1.407 --   program_options
+#10 1.407 --   date_time
+#10 1.407 --   system
+#10 1.407 --   filesystem
+#10 1.407 --   thread
+#10 1.407 --   regex
+#10 1.407 --   chrono
+#10 1.407 --   atomic
+#10 1.414 -- Configuring done
+#10 1.445 -- Generating done
+#10 1.447 -- Build files have been written to: /social-network-microservices/build
+#10 1.477 Scanning dependencies of target UniqueIdService
+#10 1.482 Scanning dependencies of target UrlShortenService
+#10 1.485 Scanning dependencies of target MediaService
+#10 1.485 [  3%] Building CXX object src/UniqueIdService/CMakeFiles/UniqueIdService.dir/__/__/gen-cpp/ComposePostService.cpp.o
+#10 1.486 [  3%] Building CXX object src/UniqueIdService/CMakeFiles/UniqueIdService.dir/__/__/gen-cpp/social_network_types.cpp.o
+#10 1.486 Scanning dependencies of target UserService
+#10 1.486 [  6%] Building CXX object src/UniqueIdService/CMakeFiles/UniqueIdService.dir/__/__/gen-cpp/UniqueIdService.cpp.o
+#10 1.486 [  6%] Building CXX object src/UniqueIdService/CMakeFiles/UniqueIdService.dir/UniqueIdService.cpp.o
+#10 1.487 Scanning dependencies of target TextService
+#10 1.489 Scanning dependencies of target UserTimelineService
+#10 1.490 Scanning dependencies of target SocialGraphService
+#10 1.491 Scanning dependencies of target ComposePostService
+#10 1.492 Scanning dependencies of target PostStorageService
+#10 1.492 Scanning dependencies of target UserMentionService
+#10 1.493 Scanning dependencies of target HomeTimelineService
+#10 1.495 [  8%] Building CXX object src/UrlShortenService/CMakeFiles/UrlShortenService.dir/__/__/gen-cpp/UrlShortenService.cpp.o
+#10 1.496 [ 10%] Building CXX object src/MediaService/CMakeFiles/MediaService.dir/MediaService.cpp.o
+#10 1.496 [ 11%] Building CXX object src/UrlShortenService/CMakeFiles/UrlShortenService.dir/UrlShortenService.cpp.o
+#10 1.496 [ 13%] Building CXX object src/UrlShortenService/CMakeFiles/UrlShortenService.dir/__/__/gen-cpp/social_network_types.cpp.o
+#10 1.497 [ 15%] Building CXX object src/TextService/CMakeFiles/TextService.dir/TextService.cpp.o
+#10 1.498 [ 16%] Building CXX object src/UserService/CMakeFiles/UserService.dir/UserService.cpp.o
+#10 1.501 [ 18%] Building CXX object src/UserTimelineService/CMakeFiles/UserTimelineService.dir/UserTimelineService.cpp.o
+#10 1.502 [ 20%] Building CXX object src/ComposePostService/CMakeFiles/ComposePostService.dir/ComposePostService.cpp.o
+#10 1.503 [ 23%] Building CXX object src/SocialGraphService/CMakeFiles/SocialGraphService.dir/SocialGraphService.cpp.o
+#10 1.503 [ 23%] Building CXX object src/UserMentionService/CMakeFiles/UserMentionService.dir/UserMentionService.cpp.o
+#10 1.504 [ 25%] Building CXX object src/PostStorageService/CMakeFiles/PostStorageService.dir/PostStorageService.cpp.o
+#10 1.505 [ 27%] Building CXX object src/HomeTimelineService/CMakeFiles/HomeTimelineService.dir/HomeTimelineService.cpp.o
+#10 3.274 [ 28%] Building CXX object src/MediaService/CMakeFiles/MediaService.dir/__/__/gen-cpp/MediaService.cpp.o
+#10 3.369 [ 30%] Building CXX object src/TextService/CMakeFiles/TextService.dir/__/__/gen-cpp/TextService.cpp.o
+#10 3.940 [ 32%] Building CXX object src/UserService/CMakeFiles/UserService.dir/__/__/gen-cpp/UserService.cpp.o
+#10 4.153 [ 33%] Building CXX object src/UserTimelineService/CMakeFiles/UserTimelineService.dir/__/__/gen-cpp/UserTimelineService.cpp.o
+#10 4.157 [ 35%] Building CXX object src/ComposePostService/CMakeFiles/ComposePostService.dir/__/__/gen-cpp/ComposePostService.cpp.o
+#10 5.149 [ 37%] Building CXX object src/TextService/CMakeFiles/TextService.dir/__/__/gen-cpp/UserMentionService.cpp.o
+#10 5.279 [ 38%] Building CXX object src/MediaService/CMakeFiles/MediaService.dir/__/__/gen-cpp/social_network_types.cpp.o
+#10 6.055 [ 40%] Building CXX object src/PostStorageService/CMakeFiles/PostStorageService.dir/__/__/gen-cpp/PostStorageService.cpp.o
+#10 6.450 [ 42%] Building CXX object src/HomeTimelineService/CMakeFiles/HomeTimelineService.dir/__/__/gen-cpp/HomeTimelineService.cpp.o
+#10 7.102 [ 44%] Building CXX object src/UserService/CMakeFiles/UserService.dir/__/__/gen-cpp/social_network_types.cpp.o
+#10 7.182 [ 45%] Building CXX object src/UserMentionService/CMakeFiles/UserMentionService.dir/__/__/gen-cpp/UserMentionService.cpp.o
+#10 7.999 [ 47%] Building CXX object src/SocialGraphService/CMakeFiles/SocialGraphService.dir/__/__/gen-cpp/SocialGraphService.cpp.o
+#10 8.583 [ 49%] Building CXX object src/PostStorageService/CMakeFiles/PostStorageService.dir/__/__/gen-cpp/social_network_types.cpp.o
+#10 8.856 [ 50%] Building CXX object src/HomeTimelineService/CMakeFiles/HomeTimelineService.dir/__/__/gen-cpp/PostStorageService.cpp.o
+#10 9.165 [ 52%] Building CXX object src/UserMentionService/CMakeFiles/UserMentionService.dir/__/__/gen-cpp/social_network_types.cpp.o
+#10 9.756 [ 54%] Building CXX object src/UserService/CMakeFiles/UserService.dir/__/__/gen-cpp/SocialGraphService.cpp.o
+#10 11.25 [ 55%] Building CXX object src/ComposePostService/CMakeFiles/ComposePostService.dir/__/__/gen-cpp/PostStorageService.cpp.o
+#10 11.38 [ 57%] Building CXX object src/HomeTimelineService/CMakeFiles/HomeTimelineService.dir/__/__/gen-cpp/SocialGraphService.cpp.o
+#10 11.40 [ 59%] Building CXX object src/SocialGraphService/CMakeFiles/SocialGraphService.dir/__/__/gen-cpp/UserService.cpp.o
+#10 11.80 [ 61%] Building CXX object src/ComposePostService/CMakeFiles/ComposePostService.dir/__/__/gen-cpp/UserTimelineService.cpp.o
+#10 13.21 [ 62%] Building CXX object src/UserTimelineService/CMakeFiles/UserTimelineService.dir/__/__/gen-cpp/social_network_types.cpp.o
+#10 13.77 [ 64%] Building CXX object src/ComposePostService/CMakeFiles/ComposePostService.dir/__/__/gen-cpp/UserService.cpp.o
+#10 14.16 [ 66%] Building CXX object src/TextService/CMakeFiles/TextService.dir/__/__/gen-cpp/UrlShortenService.cpp.o
+#10 14.66 [ 67%] Building CXX object src/SocialGraphService/CMakeFiles/SocialGraphService.dir/__/__/gen-cpp/social_network_types.cpp.o
+#10 14.88 [ 69%] Building CXX object src/HomeTimelineService/CMakeFiles/HomeTimelineService.dir/__/__/gen-cpp/social_network_types.cpp.o
+#10 15.93 [ 71%] Building CXX object src/UserTimelineService/CMakeFiles/UserTimelineService.dir/__/__/gen-cpp/PostStorageService.cpp.o
+#10 16.38 [ 72%] Linking CXX executable MediaService
+#10 16.39 [ 74%] Linking CXX executable UniqueIdService
+#10 16.60 [ 76%] Building CXX object src/ComposePostService/CMakeFiles/ComposePostService.dir/__/__/gen-cpp/UniqueIdService.cpp.o
+#10 16.70 [ 76%] Built target MediaService
+#10 16.71 [ 77%] Building CXX object src/TextService/CMakeFiles/TextService.dir/__/__/gen-cpp/social_network_types.cpp.o
+#10 16.72 [ 77%] Built target UniqueIdService
+#10 16.73 [ 79%] Building CXX object src/ComposePostService/CMakeFiles/ComposePostService.dir/__/__/gen-cpp/MediaService.cpp.o
+#10 16.97 [ 81%] Linking CXX executable UserMentionService
+#10 17.06 [ 83%] Building CXX object src/ComposePostService/CMakeFiles/ComposePostService.dir/__/__/gen-cpp/TextService.cpp.o
+#10 17.28 [ 83%] Built target UserMentionService
+#10 17.29 [ 84%] Building CXX object src/ComposePostService/CMakeFiles/ComposePostService.dir/__/__/gen-cpp/HomeTimelineService.cpp.o
+#10 17.42 [ 86%] Building CXX object src/ComposePostService/CMakeFiles/ComposePostService.dir/__/__/gen-cpp/social_network_types.cpp.o
+#10 17.61 [ 88%] Linking CXX executable UrlShortenService
+#10 17.94 [ 88%] Built target UrlShortenService
+#10 19.02 [ 89%] Linking CXX executable PostStorageService
+#10 19.24 [ 89%] Built target PostStorageService
+#10 19.97 [ 91%] Linking CXX executable HomeTimelineService
+#10 20.09 [ 93%] Linking CXX executable UserTimelineService
+#10 20.16 [ 94%] Linking CXX executable UserService
+#10 20.24 [ 94%] Built target HomeTimelineService
+#10 20.34 [ 94%] Built target UserTimelineService
+#10 20.38 [ 94%] Built target UserService
+#10 20.95 [ 96%] Linking CXX executable TextService
+#10 21.14 [ 96%] Built target TextService
+#10 21.46 [ 98%] Linking CXX executable ComposePostService
+#10 21.72 [ 98%] Built target ComposePostService
+#10 22.49 [100%] Linking CXX executable SocialGraphService
+#10 22.72 [100%] Built target SocialGraphService
+#10 22.75 [ 10%] Built target TextService
+#10 22.76 [ 18%] Built target UniqueIdService
+#10 22.79 [ 27%] Built target UserService
+#10 22.82 [ 35%] Built target SocialGraphService
+#10 22.84 [ 42%] Built target PostStorageService
+#10 22.85 [ 50%] Built target UserTimelineService
+#10 22.87 [ 69%] Built target ComposePostService
+#10 22.88 [ 76%] Built target UserMentionService
+#10 22.90 [ 83%] Built target UrlShortenService
+#10 22.91 [ 89%] Built target MediaService
+#10 22.93 [100%] Built target HomeTimelineService
+#10 22.93 Install the project...
+#10 22.94 -- Install configuration: "Debug"
+#10 22.94 -- Installing: /usr/local/bin/./TextService
+#10 22.95 -- Set runtime path of "/usr/local/bin/./TextService" to ""
+#10 22.95 -- Installing: /usr/local/bin/./UniqueIdService
+#10 22.95 -- Set runtime path of "/usr/local/bin/./UniqueIdService" to ""
+#10 22.95 -- Installing: /usr/local/bin/./UserService
+#10 22.96 -- Set runtime path of "/usr/local/bin/./UserService" to ""
+#10 22.96 -- Installing: /usr/local/bin/./SocialGraphService
+#10 22.97 -- Set runtime path of "/usr/local/bin/./SocialGraphService" to ""
+#10 22.97 -- Installing: /usr/local/bin/./PostStorageService
+#10 22.98 -- Set runtime path of "/usr/local/bin/./PostStorageService" to ""
+#10 22.98 -- Installing: /usr/local/bin/./UserTimelineService
+#10 22.98 -- Set runtime path of "/usr/local/bin/./UserTimelineService" to ""
+#10 22.98 -- Installing: /usr/local/bin/./ComposePostService
+#10 22.99 -- Set runtime path of "/usr/local/bin/./ComposePostService" to ""
+#10 22.99 -- Installing: /usr/local/bin/./UserMentionService
+#10 23.00 -- Set runtime path of "/usr/local/bin/./UserMentionService" to ""
+#10 23.00 -- Installing: /usr/local/bin/./UrlShortenService
+#10 23.01 -- Set runtime path of "/usr/local/bin/./UrlShortenService" to ""
+#10 23.01 -- Installing: /usr/local/bin/./MediaService
+#10 23.01 -- Set runtime path of "/usr/local/bin/./MediaService" to ""
+#10 23.01 -- Installing: /usr/local/bin/./HomeTimelineService
+#10 23.02 -- Set runtime path of "/usr/local/bin/./HomeTimelineService" to ""
+#10 DONE 23.1s
+
+#11 [stage-1 2/5] COPY --from=builder /usr/local/bin/* /usr/local/bin/
+#11 DONE 0.1s
+
+#12 [stage-1 3/5] COPY --from=builder /usr/local/lib/* /usr/local/lib/
+#12 DONE 0.0s
+
+#13 [stage-1 4/5] RUN apt-get update &&     DEBIAN_FRONTEND=noninteractive apt-get install -y         openssl         ca-certificates         libsasl2-2         libmemcached11         libmemcachedutil2     && apt-get clean && rm -rf /var/lib/apt/lists/*
+#13 0.301 Get:1 http://security.ubuntu.com/ubuntu xenial-security InRelease [99.8 kB]
+#13 0.439 Get:2 http://archive.ubuntu.com/ubuntu xenial InRelease [247 kB]
+#13 0.469 Get:3 http://security.ubuntu.com/ubuntu xenial-security/main amd64 Packages [2051 kB]
+#13 0.662 Get:4 http://security.ubuntu.com/ubuntu xenial-security/restricted amd64 Packages [15.9 kB]
+#13 0.662 Get:5 http://security.ubuntu.com/ubuntu xenial-security/universe amd64 Packages [984 kB]
+#13 0.680 Get:6 http://security.ubuntu.com/ubuntu xenial-security/multiverse amd64 Packages [8820 B]
+#13 1.108 Get:7 http://archive.ubuntu.com/ubuntu xenial-updates InRelease [99.8 kB]
+#13 1.238 Get:8 http://archive.ubuntu.com/ubuntu xenial-backports InRelease [97.4 kB]
+#13 1.335 Get:9 http://archive.ubuntu.com/ubuntu xenial/main amd64 Packages [1558 kB]
+#13 1.660 Get:10 http://archive.ubuntu.com/ubuntu xenial/restricted amd64 Packages [14.1 kB]
+#13 1.661 Get:11 http://archive.ubuntu.com/ubuntu xenial/universe amd64 Packages [9827 kB]
+#13 2.327 Get:12 http://archive.ubuntu.com/ubuntu xenial/multiverse amd64 Packages [176 kB]
+#13 2.328 Get:13 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 Packages [2560 kB]
+#13 2.460 Get:14 http://archive.ubuntu.com/ubuntu xenial-updates/restricted amd64 Packages [16.4 kB]
+#13 2.460 Get:15 http://archive.ubuntu.com/ubuntu xenial-updates/universe amd64 Packages [1544 kB]
+#13 2.478 Get:16 http://archive.ubuntu.com/ubuntu xenial-updates/multiverse amd64 Packages [26.2 kB]
+#13 2.478 Get:17 http://archive.ubuntu.com/ubuntu xenial-backports/main amd64 Packages [10.9 kB]
+#13 2.478 Get:18 http://archive.ubuntu.com/ubuntu xenial-backports/universe amd64 Packages [12.7 kB]
+#13 2.920 Fetched 19.3 MB in 2s (7230 kB/s)
+#13 2.920 Reading package lists...
+#13 3.417 Reading package lists...
+#13 3.908 Building dependency tree...
+#13 3.978 Reading state information...
+#13 4.026 The following additional packages will be installed:
+#13 4.026   libsasl2-modules libsasl2-modules-db libssl1.0.0
+#13 4.027 Suggested packages:
+#13 4.027   libsasl2-modules-otp libsasl2-modules-ldap libsasl2-modules-sql
+#13 4.027   libsasl2-modules-gssapi-mit | libsasl2-modules-gssapi-heimdal
+#13 4.027 The following NEW packages will be installed:
+#13 4.027   ca-certificates libmemcached11 libmemcachedutil2 libsasl2-2 libsasl2-modules
+#13 4.027   libsasl2-modules-db libssl1.0.0 openssl
+#13 4.103 0 upgraded, 8 newly installed, 0 to remove and 0 not upgraded.
+#13 4.103 Need to get 1925 kB of archives.
+#13 4.103 After this operation, 5567 kB of additional disk space will be used.
+#13 4.103 Get:1 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 libssl1.0.0 amd64 1.0.2g-1ubuntu4.20 [1083 kB]
+#13 4.292 Get:2 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 openssl amd64 1.0.2g-1ubuntu4.20 [492 kB]
+#13 4.299 Get:3 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 ca-certificates all 20210119~16.04.1 [148 kB]
+#13 4.302 Get:4 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 libsasl2-modules-db amd64 2.1.26.dfsg1-14ubuntu0.2 [14.5 kB]
+#13 4.302 Get:5 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 libsasl2-2 amd64 2.1.26.dfsg1-14ubuntu0.2 [48.7 kB]
+#13 4.303 Get:6 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 libsasl2-modules amd64 2.1.26.dfsg1-14ubuntu0.2 [47.7 kB]
+#13 4.304 Get:7 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 libmemcached11 amd64 1.0.18-4.1ubuntu2 [82.8 kB]
+#13 4.305 Get:8 http://archive.ubuntu.com/ubuntu xenial-updates/main amd64 libmemcachedutil2 amd64 1.0.18-4.1ubuntu2 [9470 B]
+#13 4.341 debconf: delaying package configuration, since apt-utils is not installed
+#13 4.349 Fetched 1925 kB in 0s (7426 kB/s)
+#13 4.360 Selecting previously unselected package libssl1.0.0:amd64.
+#13 4.360 (Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 4785 files and directories currently installed.)
+#13 4.363 Preparing to unpack .../libssl1.0.0_1.0.2g-1ubuntu4.20_amd64.deb ...
+#13 4.365 Unpacking libssl1.0.0:amd64 (1.0.2g-1ubuntu4.20) ...
+#13 4.428 Selecting previously unselected package openssl.
+#13 4.428 Preparing to unpack .../openssl_1.0.2g-1ubuntu4.20_amd64.deb ...
+#13 4.429 Unpacking openssl (1.0.2g-1ubuntu4.20) ...
+#13 4.470 Selecting previously unselected package ca-certificates.
+#13 4.470 Preparing to unpack .../ca-certificates_20210119~16.04.1_all.deb ...
+#13 4.471 Unpacking ca-certificates (20210119~16.04.1) ...
+#13 4.492 Selecting previously unselected package libsasl2-modules-db:amd64.
+#13 4.492 Preparing to unpack .../libsasl2-modules-db_2.1.26.dfsg1-14ubuntu0.2_amd64.deb ...
+#13 4.493 Unpacking libsasl2-modules-db:amd64 (2.1.26.dfsg1-14ubuntu0.2) ...
+#13 4.504 Selecting previously unselected package libsasl2-2:amd64.
+#13 4.504 Preparing to unpack .../libsasl2-2_2.1.26.dfsg1-14ubuntu0.2_amd64.deb ...
+#13 4.505 Unpacking libsasl2-2:amd64 (2.1.26.dfsg1-14ubuntu0.2) ...
+#13 4.517 Selecting previously unselected package libsasl2-modules:amd64.
+#13 4.517 Preparing to unpack .../libsasl2-modules_2.1.26.dfsg1-14ubuntu0.2_amd64.deb ...
+#13 4.518 Unpacking libsasl2-modules:amd64 (2.1.26.dfsg1-14ubuntu0.2) ...
+#13 4.532 Selecting previously unselected package libmemcached11:amd64.
+#13 4.532 Preparing to unpack .../libmemcached11_1.0.18-4.1ubuntu2_amd64.deb ...
+#13 4.534 Unpacking libmemcached11:amd64 (1.0.18-4.1ubuntu2) ...
+#13 4.548 Selecting previously unselected package libmemcachedutil2:amd64.
+#13 4.549 Preparing to unpack .../libmemcachedutil2_1.0.18-4.1ubuntu2_amd64.deb ...
+#13 4.550 Unpacking libmemcachedutil2:amd64 (1.0.18-4.1ubuntu2) ...
+#13 4.556 Processing triggers for libc-bin (2.23-0ubuntu11.3) ...
+#13 4.558 /sbin/ldconfig.real: /usr/local/lib/libSimpleAmqpClient.so.2 is not a symbolic link
+#13 4.558 
+#13 4.558 /sbin/ldconfig.real: /usr/local/lib/libredis++.so.1 is not a symbolic link
+#13 4.558 
+#13 4.558 /sbin/ldconfig.real: /usr/local/lib/libopentracing.so.1 is not a symbolic link
+#13 4.558 
+#13 4.558 /sbin/ldconfig.real: /usr/local/lib/libjaegertracing.so.0 is not a symbolic link
+#13 4.558 
+#13 4.558 /sbin/ldconfig.real: /usr/local/lib/libmongoc-1.0.so.0 is not a symbolic link
+#13 4.558 
+#13 4.558 /sbin/ldconfig.real: /usr/local/lib/libbson-1.0.so.0 is not a symbolic link
+#13 4.558 
+#13 4.558 /sbin/ldconfig.real: /usr/local/lib/libopentracing_mocktracer.so.1 is not a symbolic link
+#13 4.558 
+#13 4.569 Setting up libssl1.0.0:amd64 (1.0.2g-1ubuntu4.20) ...
+#13 4.609 Setting up openssl (1.0.2g-1ubuntu4.20) ...
+#13 4.614 Setting up ca-certificates (20210119~16.04.1) ...
+#13 4.825 Setting up libsasl2-modules-db:amd64 (2.1.26.dfsg1-14ubuntu0.2) ...
+#13 4.828 Setting up libsasl2-2:amd64 (2.1.26.dfsg1-14ubuntu0.2) ...
+#13 4.831 Setting up libsasl2-modules:amd64 (2.1.26.dfsg1-14ubuntu0.2) ...
+#13 4.836 Setting up libmemcached11:amd64 (1.0.18-4.1ubuntu2) ...
+#13 4.839 Setting up libmemcachedutil2:amd64 (1.0.18-4.1ubuntu2) ...
+#13 4.842 Processing triggers for libc-bin (2.23-0ubuntu11.3) ...
+#13 4.844 /sbin/ldconfig.real: /usr/local/lib/libSimpleAmqpClient.so.2 is not a symbolic link
+#13 4.844 
+#13 4.844 /sbin/ldconfig.real: /usr/local/lib/libredis++.so.1 is not a symbolic link
+#13 4.844 
+#13 4.844 /sbin/ldconfig.real: /usr/local/lib/libopentracing.so.1 is not a symbolic link
+#13 4.844 
+#13 4.844 /sbin/ldconfig.real: /usr/local/lib/libjaegertracing.so.0 is not a symbolic link
+#13 4.844 
+#13 4.844 /sbin/ldconfig.real: /usr/local/lib/libmongoc-1.0.so.0 is not a symbolic link
+#13 4.844 
+#13 4.844 /sbin/ldconfig.real: /usr/local/lib/libbson-1.0.so.0 is not a symbolic link
+#13 4.844 
+#13 4.844 /sbin/ldconfig.real: /usr/local/lib/libopentracing_mocktracer.so.1 is not a symbolic link
+#13 4.844 
+#13 4.847 Processing triggers for ca-certificates (20210119~16.04.1) ...
+#13 4.849 Updating certificates in /etc/ssl/certs...
+#13 5.540 129 added, 0 removed; done.
+#13 5.540 Running hooks in /etc/ca-certificates/update.d...
+#13 5.540 done.
+#13 DONE 5.6s
+
+#14 [stage-1 5/5] WORKDIR /social-network-microservices
+#14 DONE 0.0s
+
+#15 exporting to image
+#15 exporting layers
+#15 exporting layers 0.4s done
+#15 writing image sha256:14fdd3bb30215b6f7b4adbfef1336a84508ea223e3714a3129da00a24dcff7d7 done
+#15 DONE 0.4s
