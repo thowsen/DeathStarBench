@@ -27,14 +27,14 @@ function _M.RegisterUser()
   ngx.req.read_body()
   local post = ngx.req.get_post_args()
 
-  if (_StrIsEmpty(post.first_name) or _StrIsEmpty(post.last_name) or
-      _StrIsEmpty(post.username) or _StrIsEmpty(post.password) or
-      _StrIsEmpty(post.user_id)) then
-    ngx.status = ngx.HTTP_BAD_REQUEST
-    ngx.say("Incomplete arguments")
-    ngx.log(ngx.ERR, "Incomplete arguments")
-    ngx.exit(ngx.HTTP_BAD_REQUEST)
-  end
+  --if (_StrIsEmpty(post.first_name) or _StrIsEmpty(post.last_name) or
+  --    _StrIsEmpty(post.username) or _StrIsEmpty(post.password) or
+  --    _StrIsEmpty(post.user_id)) then
+  --  ngx.status = ngx.HTTP_BAD_REQUEST
+  --  ngx.say("Incomplete arguments")
+  --  ngx.log(ngx.ERR, "Incomplete arguments")
+  --  ngx.exit(ngx.HTTP_BAD_REQUEST)
+  --end
 
   local client = GenericObjectPool:connection(UserServiceClient, "user-service" .. k8s_suffix, 9090)
 
