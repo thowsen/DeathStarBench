@@ -3,6 +3,7 @@
 #include <thrift/server/TThreadedServer.h>
 #include <thrift/transport/TBufferTransports.h>
 #include <thrift/transport/TServerSocket.h>
+#include <string>
 
 #include "../utils.h"
 #include "../utils_memcached.h"
@@ -22,13 +23,19 @@ int main(int argc, char *argv[]) {
   signal(SIGINT, sigintHandler);
   init_logger();
 
-  SetUpTracer("config/jaeger-config.yml", "user-service");
+  char* instance_num = argv[1];
+  int port_tmp = *instance_num - '0';
+
+  std::string jaeger_instance_id = "user-service";
+  jaeger_instance_id.append(instance_num);
+
+  SetUpTracer("config/jaeger-config.yml", jaeger_instance_id.c_str());
 
   json config_json;
   if (load_config_file("config/service-config.json", &config_json) != 0) {
     exit(EXIT_FAILURE);
   }
-
+  LOG(fatal) << jaeger_instance_id.c_str();
   std::string secret = config_json["secret"];
 
   int port = config_json["user-service"]["port"];
@@ -87,7 +94,7 @@ int main(int argc, char *argv[]) {
   TThreadedServer server(
       std::make_shared<UserServiceProcessor>(std::make_shared<UserHandler>(
           &thread_lock, machine_id, secret, memcached_client_pool,
-          mongodb_client_pool, &social_graph_client_pool)),
+          mongodb_client_pool, &social_graph_client_pool, instance_num)),
       server_socket,
       std::make_shared<TFramedTransportFactory>(),
       std::make_shared<TBinaryProtocolFactory>());

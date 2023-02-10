@@ -136,9 +136,9 @@ services:
     #      - 27021:27017
     restart: always
 
-  user-service:
+  user-service1:
     image: base-socialnetwork:latest
-    hostname: user-service
+    hostname: user-service1
     #    ports:
     #      - 10005:9090
     restart: always
@@ -147,7 +147,22 @@ services:
         condition: service_started
       user-mongodb:
         condition: service_started
-    entrypoint: UserService
+    entrypoint: ["UserService", "1"]
+    volumes:
+      - ./config:/social-network-microservices/config
+
+  user-service0:
+    image: base-socialnetwork:latest
+    hostname: user-service0
+    #    ports:
+    #      - 10005:9090
+    restart: always
+    depends_on:
+      jaeger-agent:
+        condition: service_started
+      user-mongodb:
+        condition: service_started
+    entrypoint: ["UserService", "0"]
     volumes:
       - ./config:/social-network-microservices/config
 

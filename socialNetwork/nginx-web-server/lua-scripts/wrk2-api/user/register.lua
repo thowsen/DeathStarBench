@@ -8,6 +8,7 @@ local function _StrIsEmpty(s)
   return s == nil or s == ''
 end
 
+round_robin = 0
 function _M.RegisterUser()
   local bridge_tracer = require "opentracing_bridge_tracer"
   local ngx = ngx
@@ -27,6 +28,12 @@ function _M.RegisterUser()
   ngx.req.read_body()
   local post = ngx.req.get_post_args()
 
+  if (round_robin == 0) then 
+    round_robin = 1
+  else 
+    round_robin = 0
+  end 
+
   --if (_StrIsEmpty(post.first_name) or _StrIsEmpty(post.last_name) or
   --    _StrIsEmpty(post.username) or _StrIsEmpty(post.password) or
   --    _StrIsEmpty(post.user_id)) then
@@ -36,7 +43,7 @@ function _M.RegisterUser()
   --  ngx.exit(ngx.HTTP_BAD_REQUEST)
   --end
 
-  local client = GenericObjectPool:connection(UserServiceClient, "user-service" .. k8s_suffix, 9090)
+  local client = GenericObjectPool:connection(UserServiceClient, "user-service" .. tostring(round_robin) ..k8s_suffix, 9090)
 
   local status, err = pcall(client.RegisterUserWithId, client, req_id, post.first_name,
       post.last_name, post.username, post.password, tonumber(post.user_id), carrier)
@@ -54,7 +61,8 @@ function _M.RegisterUser()
     ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
   end
 
-  ngx.say("Success!")
+  ngx.say("Success! " .. k8s_suffix)
+  ngx.log(ngx.ERR,"Success! " .. k8s_suffix)
   GenericObjectPool:returnConnection(client)
   span:finish()
 end

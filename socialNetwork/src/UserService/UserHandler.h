@@ -71,7 +71,7 @@ class UserHandler : public UserServiceIf {
  public:
   UserHandler(std::mutex *, const std::string &, const std::string &,
               memcached_pool_st *, mongoc_client_pool_t *,
-              ClientPool<ThriftClient<SocialGraphServiceClient>> *);
+              ClientPool<ThriftClient<SocialGraphServiceClient>> *, char* instance_num);
   ~UserHandler() override = default;
   void RegisterUser(int64_t, const std::string &, const std::string &,
                     const std::string &, const std::string &,
@@ -95,6 +95,7 @@ class UserHandler : public UserServiceIf {
   std::string _machine_id;
   std::string _secret;
   std::mutex *_thread_lock;
+  std::string _instance_num;
   memcached_pool_st *_memcached_client_pool;
   mongoc_client_pool_t *_mongodb_client_pool;
   ClientPool<ThriftClient<SocialGraphServiceClient>> *_social_graph_client_pool;
@@ -105,12 +106,13 @@ UserHandler::UserHandler(std::mutex *thread_lock, const std::string &machine_id,
                          memcached_pool_st *memcached_client_pool,
                          mongoc_client_pool_t *mongodb_client_pool,
                          ClientPool<ThriftClient<SocialGraphServiceClient>>
-                             *social_graph_client_pool) {
+                             *social_graph_client_pool, char* instance_num) {
   _thread_lock = thread_lock;
   _machine_id = machine_id;
   _memcached_client_pool = memcached_client_pool;
   _mongodb_client_pool = mongodb_client_pool;
   _secret = secret;
+  _instance_num = _instance_num;
   _social_graph_client_pool = social_graph_client_pool;
 }
 
@@ -119,11 +121,23 @@ void UserHandler::RegisterUserWithId(
     const std::string &last_name, const std::string &username,
     const std::string &password, const int64_t user_id,
     const std::map<std::string, std::string> &carrier) {
-  // Initialize a span
-  LOG(warning) << "hej carl-johan";
-  ServiceException se;
-  LOG(warning) << "heeeej carl-johan";
-  se.message = "hej carl-johan";
+    // Initialize a span
+
+    TextMapReader reader(carrier);
+    std::map<std::string, std::string> writer_text_map;
+    TextMapWriter writer(writer_text_map);
+    std::string span_id = "register_user_withid_server";
+    span_id = span_id + _instance_num;
+    auto parent_span = opentracing::Tracer::Global()->Extract(reader);
+    auto span = opentracing::Tracer::Global()->StartSpan(
+        span_id,
+        {opentracing::ChildOf(parent_span->get())});
+    opentracing::Tracer::Global()->Inject(span->context(), writer);
+
+
+    ServiceException se;
+    se.message = "hej carl-johan";
+    span->Finish();
 }
 
 void UserHandler::RegisterUser(
