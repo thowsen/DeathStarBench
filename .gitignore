@@ -11,3 +11,4 @@ wrk2/wrk
 /socialNetwork/prometheus/*
 !/socialNetwork/prometheus/prometheus.yaml
 !/socialNetwork/prometheus/prometheus.yml
+socialNetwork/logs/*
