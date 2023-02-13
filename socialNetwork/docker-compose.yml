@@ -173,6 +173,48 @@ services:
     volumes:
       - ./config:/social-network-microservices/config
 
+  user-service2:
+    image: base-socialnetwork:latest
+    hostname: user-service2
+    #    ports:
+    #      - 10005:9090
+    restart: always
+    depends_on:
+      jaeger-agent:
+        condition: service_started
+      user-mongodb:
+        condition: service_started
+    entrypoint: ["UserService", "0"]
+    volumes:
+      - ./config:/social-network-microservices/config
+  user-service3:
+    image: base-socialnetwork:latest
+    hostname: user-service3
+    #    ports:
+    #      - 10005:9090
+    restart: always
+    depends_on:
+      jaeger-agent:
+        condition: service_started
+      user-mongodb:
+        condition: service_started
+    entrypoint: ["UserService", "0"]
+    volumes:
+      - ./config:/social-network-microservices/config
+  user-service4:
+    image: base-socialnetwork:latest
+    hostname: user-service4
+    #    ports:
+    #      - 10005:9090
+    restart: always
+    depends_on:
+      jaeger-agent:
+        condition: service_started
+      user-mongodb:
+        condition: service_started
+    entrypoint: ["UserService", "0"]
+    volumes:
+      - ./config:/social-network-microservices/config
   user-memcached:
     image: memcached
     hostname: user-memcached
@@ -339,10 +381,10 @@ services:
   
   prometheus: 
     image: prom/prometheus:latest 
-    user: "401604734" 
-    environment: 
-      - PUID=401604734 
-      - PGID=401604734 
+#    user: $UID 
+#    environment: 
+#      - PUID=$UID
+#      - PGID=$UID 
     container_name: prometheus 
     restart: unless-stopped 
     volumes: 
