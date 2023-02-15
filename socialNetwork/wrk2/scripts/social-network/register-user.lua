@@ -67,16 +67,8 @@ request = function()
   local method = "POST"
   local path = "http://localhost:8080/wrk2-api/user/register"
   local headers = {}
-  local body
+  local body = 1
   headers["Content-Type"] = "application/x-www-form-urlencoded"
-  if num_media then
-    body   = "username=" .. username .. "&user_id=" .. user_id ..
-        "&text=" .. text .. "&media_ids=" .. media_ids ..
-        "&media_types=" .. media_types .. "&post_type=0"
-  else
-    body   = "username=" .. username .. "&user_id=" .. user_id ..
-        "&text=" .. text .. "&media_ids=" .. "&post_type=0"
-  end
 
   return wrk.format(method, path, headers, body)
 end
