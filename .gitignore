@@ -12,3 +12,6 @@ wrk2/wrk
 !/socialNetwork/prometheus/prometheus.yaml
 !/socialNetwork/prometheus/prometheus.yml
 socialNetwork/logs/*
+/socialNetwork/locustscripts/*
+!/socialNetwork/locustscripts/locustfile.py
+/socialNetwork/pythonTest
