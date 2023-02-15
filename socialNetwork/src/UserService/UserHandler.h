@@ -8,6 +8,7 @@
 
 #include <iomanip>
 #include <iostream>
+#include <vector>
 #include <jwt/jwt.hpp>
 #include <nlohmann/json.hpp>
 #include <random>
@@ -71,7 +72,7 @@ class UserHandler : public UserServiceIf {
  public:
   UserHandler(std::mutex *, const std::string &, const std::string &,
               memcached_pool_st *, mongoc_client_pool_t *,
-              ClientPool<ThriftClient<SocialGraphServiceClient>> *, char* instance_num);
+              ClientPool<ThriftClient<SocialGraphServiceClient>> *, char*);
   ~UserHandler() override = default;
   void RegisterUser(int64_t, const std::string &, const std::string &,
                     const std::string &, const std::string &,
@@ -80,6 +81,7 @@ class UserHandler : public UserServiceIf {
                           const std::string &, const std::string &, int64_t,
                           const std::map<std::string, std::string> &) override;
 
+  void Ping(const int64_t , const std::map<std::string, std::string> &) override;
   void ComposeCreatorWithUserId(
       Creator &, int64_t, int64_t, const std::string &,
       const std::map<std::string, std::string> &) override;
@@ -92,6 +94,7 @@ class UserHandler : public UserServiceIf {
                     const std::map<std::string, std::string> &) override;
 
  private:
+  json _config_json;
   std::string _machine_id;
   std::string _secret;
   std::mutex *_thread_lock;
@@ -105,8 +108,8 @@ UserHandler::UserHandler(std::mutex *thread_lock, const std::string &machine_id,
                          const std::string &secret,
                          memcached_pool_st *memcached_client_pool,
                          mongoc_client_pool_t *mongodb_client_pool,
-                         ClientPool<ThriftClient<SocialGraphServiceClient>>
-                             *social_graph_client_pool, char* instance_num) {
+                         ClientPool<ThriftClient<SocialGraphServiceClient>> *social_graph_client_pool, 
+                         char* instance_num) {
   _thread_lock = thread_lock;
   _machine_id = machine_id;
   _memcached_client_pool = memcached_client_pool;
@@ -114,6 +117,9 @@ UserHandler::UserHandler(std::mutex *thread_lock, const std::string &machine_id,
   _secret = secret;
   _instance_num = _instance_num;
   _social_graph_client_pool = social_graph_client_pool;
+  if (load_config_file("config/service-config.json", &_config_json) != 0) {
+    exit(EXIT_FAILURE);
+  }
 }
 
 void UserHandler::RegisterUserWithId(
@@ -121,8 +127,8 @@ void UserHandler::RegisterUserWithId(
     const std::string &last_name, const std::string &username,
     const std::string &password, const int64_t user_id,
     const std::map<std::string, std::string> &carrier) {
-    // Initialize a span
 
+    // Initialize a span
     TextMapReader reader(carrier);
     std::map<std::string, std::string> writer_text_map;
     TextMapWriter writer(writer_text_map);
@@ -134,9 +140,93 @@ void UserHandler::RegisterUserWithId(
         {opentracing::ChildOf(parent_span->get())});
     opentracing::Tracer::Global()->Inject(span->context(), writer);
 
+    /*
+    
+    INTRA-SERVICE COMMUNICATION START
+    
+    */
 
-    ServiceException se;
-    se.message = "hej carl-johan";
+    auto intra_service_span = opentracing::Tracer::Global()->StartSpan(
+         "user_service_intra_service", {opentracing::ChildOf(&span->context())});
+
+
+
+    std::string user_addr = _config_json["user-service"]["addr"];
+    int user_port = _config_json["user-service"]["port"];
+    int user_conns = _config_json["user-service"]["connections"];
+    int user_timeout = _config_json["user-service"]["timeout_ms"];
+    int user_keepalive = _config_json["user-service"]["keepalive_ms"];
+
+
+
+    std::vector<std::string> sister_instances;
+    std::stringstream ss(password);
+
+     while (ss.good()) {
+        std::string substr;
+        std::getline(ss, substr, ',');
+        sister_instances.push_back(substr);
+    }
+ 
+    if (user_id == 1){
+      for (auto cli : sister_instances){
+        ClientPool<ThriftClient<UserServiceClient>> user_client_pool(
+            "social-graph", cli, user_port, 0, user_conns, user_timeout,
+            user_keepalive, _config_json);
+
+
+        auto user_client_wrapper = user_client_pool.Pop();
+        if (!user_client_wrapper) {
+          ServiceException se;
+          se.errorCode = ErrorCode::SE_THRIFT_CONN_ERROR;
+          se.message = "Failed to connect to user-service";
+          LOG(error) << se.message;
+          span->Finish();
+          throw se;
+        }
+
+        auto user_client = user_client_wrapper->GetClient();
+        try {
+          user_client->Ping(req_id, writer_text_map);
+        } catch (...) {
+          LOG(error) << "Failed to send compose-creator to user-service";
+          user_client_pool.Remove(user_client_wrapper);
+          span->Finish();
+          throw;
+        }
+
+      }
+    }
+
+    std::string log_instances = "[";
+    for (auto val: sister_instances){
+      log_instances = log_instances + val;
+    }
+    log_instances = log_instances + "]";
+
+    LOG(warning) << log_instances;
+
+    intra_service_span->Finish();
+
+    /*
+    
+    INTRA-SERVICE COMMUNICATION END
+    
+    */
+
+    span->Finish();
+}
+
+void UserHandler::Ping(const int64_t req_id, const std::map<std::string, std::string> &carrier) {
+    std::string span_id = "user_service_ping" + _instance_num;
+    TextMapReader reader(carrier);
+    std::map<std::string, std::string> writer_text_map;
+    TextMapWriter writer(writer_text_map);
+    span_id = span_id + _instance_num;
+    auto parent_span = opentracing::Tracer::Global()->Extract(reader);
+    auto span = opentracing::Tracer::Global()->StartSpan(
+        span_id,
+        {opentracing::ChildOf(parent_span->get())});
     span->Finish();
 }
 
@@ -147,9 +237,6 @@ void UserHandler::RegisterUser(
     const std::map<std::string, std::string> &carrier) {
   // Initialize a span
 
-  ServiceException se;
-  LOG(warning) << "HEEEEJ CJ";
-  se.message =  "hej CJ";
 }
 
 void UserHandler::ComposeCreatorWithUsername(

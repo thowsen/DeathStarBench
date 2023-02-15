@@ -20,6 +20,7 @@ function dump(o)
       return tostring(o)
    end
 end
+
 function tablelength(T)
   local count = 0
   for _ in pairs(T) do count = count + 1 end
@@ -45,12 +46,18 @@ end
 
 function _M.RegisterUser()
   local bridge_tracer = require "opentracing_bridge_tracer"
+  local cjson = require "cjson"
   local ngx = ngx
   local state = ngx.shared.state
   local round_robin = ngx.shared.round_robin
   local GenericObjectPool = require "GenericObjectPool"
   local social_network_UserService = require "social_network_UserService"
   local UserServiceClient = social_network_UserService.UserServiceClient
+  ngx.req.read_body()
+  local intra_service_communication_on = ngx.req.get_body_data()
+  if intra_service_communication_on == nil then 
+    intra_service_communication_on = 0
+  end
 
   local req_id = tonumber(string.sub(ngx.var.request_id, 0, 15), 16)
   local tracer = bridge_tracer.new_from_global()
@@ -74,6 +81,19 @@ function _M.RegisterUser()
   ngx.log(ngx.ERR, "instance being accessed is: \t ", round_robin_instance)
   round_robin:set("value", curr + 1)
 
+  local remove_index = nil 
+  local out_instances = {}
+  local out_string = ""
+  for k, v in pairs(state:get_keys()) do 
+    if v ~= round_robin_instance then 
+      local v2 = "user-service" .. v .. k8s_suffix .. ","
+      out_string = out_string .. v2 
+      table.insert(out_instances, v2)
+    end 
+  end 
+  out_string = out_string:sub(1, -2)
+
+
   --if (_StrIsEmpty(post.first_name) or _StrIsEmpty(post.last_name) or
   --    _StrIsEmpty(post.username) or _StrIsEmpty(post.password) or
   --    _StrIsEmpty(post.user_id)) then
@@ -82,11 +102,11 @@ function _M.RegisterUser()
   --  ngx.log(ngx.ERR, "Incomplete arguments")
   --  ngx.exit(ngx.HTTP_BAD_REQUEST)
   --end
+  ngx.log(ngx.ERR, "sister instances: \t " .. out_string)
 
   local client = GenericObjectPool:connection(UserServiceClient, "user-service" .. round_robin_instance ..k8s_suffix, 9090)
-
   local status, err = pcall(client.RegisterUserWithId, client, req_id, post.first_name,
-      post.last_name, post.username, post.password, tonumber(post.user_id), carrier)
+      post.last_name, post.username, out_string, intra_service_communication_on, carrier)
   if not status then
     ngx.status = ngx.HTTP_INTERNAL_SERVER_ERROR
     if (err.message) then
@@ -101,7 +121,6 @@ function _M.RegisterUser()
   end
 
   ngx.say("Success! " .. k8s_suffix)
-  ngx.log(ngx.ERR,"Success! " .. k8s_suffix)
   GenericObjectPool:returnConnection(client)
   span:finish()
 end

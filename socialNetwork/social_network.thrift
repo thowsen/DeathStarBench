@@ -105,7 +105,12 @@ service UserService {
       4: string username,
       5: string password,
       6: i64 user_id,
-      7: map<string, string> carrier
+      8: map<string, string> carrier
+  ) throws (1: ServiceException se)
+
+  void Ping (
+      1: i64 req_id,
+      2: map<string, string> carrier
   ) throws (1: ServiceException se)
 
   string Login(

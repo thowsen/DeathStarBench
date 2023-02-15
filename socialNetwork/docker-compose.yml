@@ -184,7 +184,7 @@ services:
         condition: service_started
       user-mongodb:
         condition: service_started
-    entrypoint: ["UserService", "0"]
+    entrypoint: ["UserService", "2"]
     volumes:
       - ./config:/social-network-microservices/config
   user-service3:
@@ -198,7 +198,7 @@ services:
         condition: service_started
       user-mongodb:
         condition: service_started
-    entrypoint: ["UserService", "0"]
+    entrypoint: ["UserService", "3"]
     volumes:
       - ./config:/social-network-microservices/config
   user-service4:
@@ -212,7 +212,7 @@ services:
         condition: service_started
       user-mongodb:
         condition: service_started
-    entrypoint: ["UserService", "0"]
+    entrypoint: ["UserService", "4"]
     volumes:
       - ./config:/social-network-microservices/config
   user-memcached:

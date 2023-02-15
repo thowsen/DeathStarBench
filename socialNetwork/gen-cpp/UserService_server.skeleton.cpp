@@ -30,6 +30,11 @@ class UserServiceHandler : virtual public UserServiceIf {
     printf("RegisterUserWithId\n");
   }
 
+  void Ping(const int64_t req_id, const std::map<std::string, std::string> & carrier) {
+    // Your implementation goes here
+    printf("Ping\n");
+  }
+
   void Login(std::string& _return, const int64_t req_id, const std::string& username, const std::string& password, const std::map<std::string, std::string> & carrier) {
     // Your implementation goes here
     printf("Login\n");
@@ -54,11 +59,11 @@ class UserServiceHandler : virtual public UserServiceIf {
 
 int main(int argc, char **argv) {
   int port = 9090;
-  ::apache::thrift::stdcxx::shared_ptr<UserServiceHandler> handler(new UserServiceHandler());
-  ::apache::thrift::stdcxx::shared_ptr<TProcessor> processor(new UserServiceProcessor(handler));
-  ::apache::thrift::stdcxx::shared_ptr<TServerTransport> serverTransport(new TServerSocket(port));
-  ::apache::thrift::stdcxx::shared_ptr<TTransportFactory> transportFactory(new TBufferedTransportFactory());
-  ::apache::thrift::stdcxx::shared_ptr<TProtocolFactory> protocolFactory(new TBinaryProtocolFactory());
+  ::std::shared_ptr<UserServiceHandler> handler(new UserServiceHandler());
+  ::std::shared_ptr<TProcessor> processor(new UserServiceProcessor(handler));
+  ::std::shared_ptr<TServerTransport> serverTransport(new TServerSocket(port));
+  ::std::shared_ptr<TTransportFactory> transportFactory(new TBufferedTransportFactory());
+  ::std::shared_ptr<TProtocolFactory> protocolFactory(new TBinaryProtocolFactory());
 
   TSimpleServer server(processor, serverTransport, transportFactory, protocolFactory);
   server.serve();

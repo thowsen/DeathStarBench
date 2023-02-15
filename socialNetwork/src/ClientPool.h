@@ -31,6 +31,7 @@ class ClientPool {
   void Push(TClient *);
   void Keepalive(TClient *);
   void Remove(TClient *);
+  std::vector<TClient *>  GetAll() ;
 
  private:
   std::deque<TClient *> _pool;
@@ -135,6 +136,19 @@ void ClientPool<TClient>::Remove(TClient *client) {
   _curr_pool_size--;
   cv_lock.unlock();
   _cv.notify_one();
+}
+
+template<class TClient>
+std::vector<TClient *> ClientPool<TClient>::GetAll() {
+  std::vector<TClient *> out;
+  std::unique_lock<std::mutex> cv_lock(_mtx);
+
+  for (auto i = 0; i < _pool.size(); i++){
+    out.push_back(_pool[i]);
+  }
+  cv_lock.unlock();
+  _cv.notify_one();
+  return out;
 }
 
 template<class TClient>
