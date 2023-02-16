@@ -54,10 +54,13 @@ function _M.RegisterUser()
   local social_network_UserService = require "social_network_UserService"
   local UserServiceClient = social_network_UserService.UserServiceClient
   ngx.req.read_body()
-  local intra_service_communication_on = ngx.req.get_body_data()
+  local body_json = cjson.decode(ngx.req.get_body_data())
+  local intra_service_communication_on = body_json["intra_service"]
   if intra_service_communication_on == nil then 
     intra_service_communication_on = 0
   end
+
+  ngx.log(ngx.ERR, body_json["intra_service"])
 
   local req_id = tonumber(string.sub(ngx.var.request_id, 0, 15), 16)
   local tracer = bridge_tracer.new_from_global()

@@ -67,7 +67,7 @@ request = function()
   local method = "POST"
   local path = "http://localhost:8080/wrk2-api/user/register"
   local headers = {}
-  local body = 1
+  local body = "{ \"intra_service\": 0 }"
   headers["Content-Type"] = "application/x-www-form-urlencoded"
 
   return wrk.format(method, path, headers, body)
