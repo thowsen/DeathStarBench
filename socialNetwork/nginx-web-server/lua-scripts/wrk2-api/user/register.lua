@@ -60,7 +60,6 @@ function _M.RegisterUser()
     intra_service_communication_on = 0
   end
 
-  ngx.log(ngx.ERR, body_json["intra_service"])
 
   local req_id = tonumber(string.sub(ngx.var.request_id, 0, 15), 16)
   local tracer = bridge_tracer.new_from_global()
@@ -81,7 +80,6 @@ function _M.RegisterUser()
   local keys = state:get_keys()
   local round_robin_instance = keys[curr % tablelength(keys) + 1]
 
-  ngx.log(ngx.ERR, "instance being accessed is: \t ", round_robin_instance)
   round_robin:set("value", curr + 1)
 
   local remove_index = nil 
@@ -105,7 +103,6 @@ function _M.RegisterUser()
   --  ngx.log(ngx.ERR, "Incomplete arguments")
   --  ngx.exit(ngx.HTTP_BAD_REQUEST)
   --end
-  ngx.log(ngx.ERR, "sister instances: \t " .. out_string)
 
   local client = GenericObjectPool:connection(UserServiceClient, "user-service" .. round_robin_instance ..k8s_suffix, 9090)
   local status, err = pcall(client.RegisterUserWithId, client, req_id, post.first_name,
