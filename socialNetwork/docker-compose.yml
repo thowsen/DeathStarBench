@@ -142,27 +142,19 @@ services:
     #      - 27021:27017
     restart: always
 
-  user-service1:
-    image: base-socialnetwork:latest
-    hostname: user-service1
-    #    ports:
-    #      - 10005:9090
-    restart: always
-    depends_on:
-      jaeger-agent:
-        condition: service_started
-      user-mongodb:
-        condition: service_started
-    entrypoint: ["UserService", "1"]
-    volumes:
-      - ./config:/social-network-microservices/config
-
   user-service0:
     image: base-socialnetwork:latest
     hostname: user-service0
     #    ports:
     #      - 10005:9090
     restart: always
+    deploy:
+      resources: 
+        limits:
+          cpus: '0.5'
+          memory: '1G'
+        reservations:
+          cpus: '0.4'
     depends_on:
       jaeger-agent:
         condition: service_started
@@ -172,12 +164,41 @@ services:
     volumes:
       - ./config:/social-network-microservices/config
 
+  user-service1:
+    image: base-socialnetwork:latest
+    hostname: user-service1
+    #    ports:
+    #      - 10005:9090
+    restart: always
+    deploy:
+      resources: 
+        limits:
+          cpus: '0.5'
+          memory: '1G'
+        reservations:
+          cpus: '0.4'
+    depends_on:
+      jaeger-agent:
+        condition: service_started
+      user-mongodb:
+        condition: service_started
+    entrypoint: ["UserService", "1"]
+    volumes:
+      - ./config:/social-network-microservices/config
+
   user-service2:
     image: base-socialnetwork:latest
     hostname: user-service2
     #    ports:
     #      - 10005:9090
     restart: always
+    deploy:
+      resources: 
+        limits:
+          cpus: '0.5'
+          memory: '1G'
+        reservations:
+          cpus: '0.4'
     depends_on:
       jaeger-agent:
         condition: service_started
@@ -186,12 +207,20 @@ services:
     entrypoint: ["UserService", "2"]
     volumes:
       - ./config:/social-network-microservices/config
+  
   user-service3:
     image: base-socialnetwork:latest
     hostname: user-service3
     #    ports:
     #      - 10005:9090
     restart: always
+    deploy:
+      resources: 
+        limits:
+          cpus: '0.5'
+          memory: '1G'
+        reservations:
+          cpus: '0.4'
     depends_on:
       jaeger-agent:
         condition: service_started
@@ -200,12 +229,20 @@ services:
     entrypoint: ["UserService", "3"]
     volumes:
       - ./config:/social-network-microservices/config
+  
   user-service4:
     image: base-socialnetwork:latest
     hostname: user-service4
     #    ports:
     #      - 10005:9090
     restart: always
+    deploy:
+      resources: 
+        limits:
+          cpus: '0.5'
+          memory: '1G'
+        reservations:
+          cpus: '0.4'
     depends_on:
       jaeger-agent:
         condition: service_started
@@ -371,14 +408,14 @@ services:
       - "--disable_metrics=accelerator,cpu_topology,disk,diskIO,memory_numa,network,tcp,udp,percpu,sched,process,hugetlb,referenced_memory,resctrl"
 
   #Copy-paste from example
-  #grafana:
-  #  image: grafana/grafana:latest
-  #  container_name: grafana
-  #  ports:
-  #    - "3000:3000"
-  #  volumes:
-  #    - grafana-data:/var/lib/grafana
-  #  restart: unless-stopped
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+    restart: unless-stopped
   
   prometheus:
     image: prom/prometheus:latest

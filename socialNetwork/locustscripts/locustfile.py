@@ -4,13 +4,13 @@ import locust.stats
 class HelloWorldUser(HttpUser):
     
     # wait time after each performed task for each spawned user
-    wait_time = between(0, 0.25)
+    wait_time = between(0, 0.05)
 
     # url to index page
     host = "http://localhost:8080"
     
     locust.stats.CSV_STATS_INTERVAL_SEC = 1 # default is 1 second
-    #locust.stats.CSV_STATS_FLUSH_INTERVAL_SEC = 60 # Determines how often the data is flushed to disk, default is 10 seconds
+    locust.stats.CSV_STATS_FLUSH_INTERVAL_SEC = 10 # Determines how often the data is flushed to disk, default is 10 seconds
     #http://localhost:8080/wrk2-api/user/register
 
     #loc10:
@@ -22,5 +22,5 @@ class HelloWorldUser(HttpUser):
     
     @task
     def hello_world(self):
-        self.client.post("/wrk2-api/user/register", json={"intra_service": "0"})
+        self.client.post("/wrk2-api/user/register", json={"intra_service": 0})
         
