@@ -169,6 +169,7 @@ void UserHandler::RegisterUserWithId(
     }
  
     if (user_id == 1){
+      try {
       for (auto cli : sister_instances){
         ClientPool<ThriftClient<UserServiceClient>> user_client_pool(
             "social-graph", cli, user_port, 0, user_conns, user_timeout,
@@ -194,17 +195,16 @@ void UserHandler::RegisterUserWithId(
           span->Finish();
           throw;
         }
-
+      }
+      }
+      catch (...) {
+        ServiceException se;
+        se.errorCode = ErrorCode::SE_MEMCACHED_ERROR;
+        se.message = "failed intra-service communication pop";
+        throw se;
       }
     }
 
-    std::string log_instances = "[";
-    for (auto val: sister_instances){
-      log_instances = log_instances + val;
-    }
-    log_instances = log_instances + "]";
-
-    LOG(warning) << log_instances;
 
     intra_service_span->Finish();
 
