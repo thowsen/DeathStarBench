@@ -87,7 +87,7 @@ function _M.RegisterUser()
   local out_string = ""
   for k, v in pairs(state:get_keys()) do 
     if v ~= round_robin_instance then 
-      local v2 = "user-service" .. v .. k8s_suffix .. ","
+      local v2 = v .. k8s_suffix .. ","
       out_string = out_string .. v2 
       table.insert(out_instances, v2)
     end 

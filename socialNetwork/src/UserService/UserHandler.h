@@ -80,7 +80,7 @@ class UserHandler : public UserServiceIf {
   void RegisterUserWithId(int64_t, const std::string &, const std::string &,
                           const std::string &, const std::string &, int64_t,
                           const std::map<std::string, std::string> &) override;
-
+  void Init();
   void Ping(const int64_t , const std::map<std::string, std::string> &) override;
   void ComposeCreatorWithUserId(
       Creator &, int64_t, int64_t, const std::string &,
@@ -100,8 +100,15 @@ class UserHandler : public UserServiceIf {
   std::mutex *_thread_lock;
   std::string _instance_num;
   memcached_pool_st *_memcached_client_pool;
+  bool _init;
   mongoc_client_pool_t *_mongodb_client_pool;
   ClientPool<ThriftClient<SocialGraphServiceClient>> *_social_graph_client_pool;
+  std::vector<ClientPool<ThriftClient<UserServiceClient>>> _client_pools;
+  ClientPool<ThriftClient<UserServiceClient>> *client_pool0;
+  ClientPool<ThriftClient<UserServiceClient>> *client_pool1;
+  ClientPool<ThriftClient<UserServiceClient>> *client_pool2;
+  ClientPool<ThriftClient<UserServiceClient>> *client_pool3;
+  ClientPool<ThriftClient<UserServiceClient>> *client_pool4;
 };
 
 UserHandler::UserHandler(std::mutex *thread_lock, const std::string &machine_id,
@@ -110,6 +117,7 @@ UserHandler::UserHandler(std::mutex *thread_lock, const std::string &machine_id,
                          mongoc_client_pool_t *mongodb_client_pool,
                          ClientPool<ThriftClient<SocialGraphServiceClient>> *social_graph_client_pool, 
                          char* instance_num) {
+  _init = false;
   _thread_lock = thread_lock;
   _machine_id = machine_id;
   _memcached_client_pool = memcached_client_pool;
@@ -122,12 +130,30 @@ UserHandler::UserHandler(std::mutex *thread_lock, const std::string &machine_id,
   }
 }
 
+
+void UserHandler::Init(){
+  json _config_json;
+  if (load_config_file("config/service-config.json", &_config_json) != 0) {
+    exit(EXIT_FAILURE);
+  }
+  std::string user_addr = _config_json["user-service"]["addr"];
+  int user_port = _config_json["user-service"]["port"];
+  int user_conns = _config_json["user-service"]["connections"];
+  int user_timeout = _config_json["user-service"]["timeout_ms"];
+  int user_keepalive = _config_json["user-service"]["keepalive_ms"];
+  this->client_pool0 = new ClientPool<ThriftClient<UserServiceClient>>("social-graph0", "user-service0", user_port, 0, user_conns, user_timeout, user_keepalive, _config_json);
+  this->client_pool1 = new ClientPool<ThriftClient<UserServiceClient>>("social-graph1", "user-service1", user_port, 0, user_conns, user_timeout, user_keepalive, _config_json);
+  this->client_pool2 = new ClientPool<ThriftClient<UserServiceClient>>("social-graph2", "user-service2", user_port, 0, user_conns, user_timeout, user_keepalive, _config_json);
+  this->client_pool3 = new ClientPool<ThriftClient<UserServiceClient>>("social-graph3", "user-service3", user_port, 0, user_conns, user_timeout, user_keepalive, _config_json);
+  this->client_pool4 = new ClientPool<ThriftClient<UserServiceClient>>("social-graph4", "user-service4", user_port, 0, user_conns, user_timeout, user_keepalive, _config_json);
+  this->_init = true;
+}
+
 void UserHandler::RegisterUserWithId(
     const int64_t req_id, const std::string &first_name,
     const std::string &last_name, const std::string &username,
     const std::string &password, const int64_t user_id,
     const std::map<std::string, std::string> &carrier) {
-
     // Initialize a span
     TextMapReader reader(carrier);
     std::map<std::string, std::string> writer_text_map;
@@ -140,22 +166,29 @@ void UserHandler::RegisterUserWithId(
         {opentracing::ChildOf(parent_span->get())});
     opentracing::Tracer::Global()->Inject(span->context(), writer);
 
+
+  json _config_json;
+  if (load_config_file("config/service-config.json", &_config_json) != 0) {
+    exit(EXIT_FAILURE);
+  }
+  std::string user_addr = _config_json["user-service"]["addr"];
+  int user_port = _config_json["user-service"]["port"];
+  int user_conns = _config_json["user-service"]["connections"];
+  int user_timeout = _config_json["user-service"]["timeout_ms"];
+  int user_keepalive = _config_json["user-service"]["keepalive_ms"];
+  ClientPool<ThriftClient<UserServiceClient>> * client_pool0 = new ClientPool<ThriftClient<UserServiceClient>>("social-graph0", "user-service0", user_port, 0, user_conns, user_timeout, user_keepalive, _config_json);
+  ClientPool<ThriftClient<UserServiceClient>> * client_pool1 = new ClientPool<ThriftClient<UserServiceClient>>("social-graph1", "user-service1", user_port, 0, user_conns, user_timeout, user_keepalive, _config_json);
+  ClientPool<ThriftClient<UserServiceClient>> * client_pool2 = new ClientPool<ThriftClient<UserServiceClient>>("social-graph2", "user-service2", user_port, 0, user_conns, user_timeout, user_keepalive, _config_json);
+  ClientPool<ThriftClient<UserServiceClient>> * client_pool3 = new ClientPool<ThriftClient<UserServiceClient>>("social-graph3", "user-service3", user_port, 0, user_conns, user_timeout, user_keepalive, _config_json);
+  ClientPool<ThriftClient<UserServiceClient>> * client_pool4 = new ClientPool<ThriftClient<UserServiceClient>>("social-graph4", "user-service4", user_port, 0, user_conns, user_timeout, user_keepalive, _config_json);
+
     /*
     
     INTRA-SERVICE COMMUNICATION START
     
     */
 
-    auto intra_service_span = opentracing::Tracer::Global()->StartSpan(
-         "user_service_intra_service", {opentracing::ChildOf(&span->context())});
 
-
-
-    std::string user_addr = _config_json["user-service"]["addr"];
-    int user_port = _config_json["user-service"]["port"];
-    int user_conns = _config_json["user-service"]["connections"];
-    int user_timeout = _config_json["user-service"]["timeout_ms"];
-    int user_keepalive = _config_json["user-service"]["keepalive_ms"];
 
 
 
@@ -167,16 +200,35 @@ void UserHandler::RegisterUserWithId(
         std::getline(ss, substr, ',');
         sister_instances.push_back(substr);
     }
- 
-    if (user_id == 1){
-      try {
+
+    if (user_id == 1){ 
+    auto intra_service_span = opentracing::Tracer::Global()->StartSpan(
+         "user_service_intra_service", {opentracing::ChildOf(&span->context())});
+    try {
       for (auto cli : sister_instances){
-        ClientPool<ThriftClient<UserServiceClient>> user_client_pool(
-            "social-graph", cli, user_port, 0, user_conns, user_timeout,
-            user_keepalive, _config_json);
+        int cli_int = std::stoi(cli);
+        //ClientPool<ThriftClient<UserServiceClient>> user_client_pool;
+        ClientPool<ThriftClient<UserServiceClient>> * user_client_pool;
+        switch(cli_int) {
+          case 1: 
+            user_client_pool = client_pool1;
+            break;
+          case 2: 
+            user_client_pool = client_pool2;
+            break;
+          case 3: 
+            user_client_pool = client_pool3;
+            break;
+          case 4: 
+            user_client_pool = client_pool4;
+            break;
+          default:
+            user_client_pool = client_pool0;
+        }
+
+        auto user_client_wrapper = user_client_pool->Pop();
 
 
-        auto user_client_wrapper = user_client_pool.Pop();
         if (!user_client_wrapper) {
           ServiceException se;
           se.errorCode = ErrorCode::SE_THRIFT_CONN_ERROR;
@@ -189,9 +241,11 @@ void UserHandler::RegisterUserWithId(
         auto user_client = user_client_wrapper->GetClient();
         try {
           user_client->Ping(req_id, writer_text_map);
+          user_client_pool->Keepalive(user_client_wrapper);
+
         } catch (...) {
           LOG(error) << "Failed to send compose-creator to user-service";
-          user_client_pool.Remove(user_client_wrapper);
+          user_client_pool->Remove(user_client_wrapper);
           span->Finish();
           throw;
         }
@@ -200,20 +254,26 @@ void UserHandler::RegisterUserWithId(
       catch (...) {
         ServiceException se;
         se.errorCode = ErrorCode::SE_MEMCACHED_ERROR;
+        LOG(warning) << "failed intra-service communication pop";
         se.message = "failed intra-service communication pop";
         throw se;
       }
+    intra_service_span->Finish();
     }
 
 
-    intra_service_span->Finish();
+
+    delete client_pool0;
+    delete client_pool1;
+    delete client_pool2;
+    delete client_pool3;
+    delete client_pool4;
 
     /*
     
     INTRA-SERVICE COMMUNICATION END
     
     */
-
     span->Finish();
 }
 
@@ -225,7 +285,7 @@ void UserHandler::Ping(const int64_t req_id, const std::map<std::string, std::st
     span_id = span_id + _instance_num;
     auto parent_span = opentracing::Tracer::Global()->Extract(reader);
     auto span = opentracing::Tracer::Global()->StartSpan(
-        span_id,
+        "ping",
         {opentracing::ChildOf(parent_span->get())});
     span->Finish();
 }
@@ -306,7 +366,7 @@ void UserHandler::ComposeCreatorWithUsername(
       throw se;
     }
     bson_t *query = bson_new();
-    BSON_APPEND_UTF8(query, "username", username.c_str());
+    BSON_APPEND_UTF8(query, "userna    if (user_id == 1){me", username.c_str());
 
     auto find_span = opentracing::Tracer::Global()->StartSpan(
         "user_mongo_find_client", {opentracing::ChildOf(&span->context())});

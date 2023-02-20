@@ -35,7 +35,6 @@ int main(int argc, char *argv[]) {
   if (load_config_file("config/service-config.json", &config_json) != 0) {
     exit(EXIT_FAILURE);
   }
-  LOG(fatal) << jaeger_instance_id.c_str();
   std::string secret = config_json["secret"];
 
   int port = config_json["user-service"]["port"];
