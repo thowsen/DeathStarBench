@@ -405,7 +405,7 @@ services:
     command:
       - "--housekeeping_interval=1s"
       - "--allow_dynamic_housekeeping=false"
-      - "--disable_metrics=accelerator,cpu_topology,disk,diskIO,memory_numa,network,tcp,udp,percpu,sched,process,hugetlb,referenced_memory,resctrl"
+      - "--disable_metrics=accelerator,cpu_topology,disk,diskIO,memory_numa,network,tcp,udp,process,percpu,sched,hugetlb,referenced_memory,resctrl"
 
   #Copy-paste from example
   grafana:

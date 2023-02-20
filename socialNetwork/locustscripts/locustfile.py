@@ -85,13 +85,13 @@ def save_assignment(assignment):
 
 class HelloWorldUser(HttpUser):
     
-    # wait time after each performed task for each spawned user
+    # wait time after each performed task for each spawned user -> request per second per user
     wait_time = between(0, 0.05)
 
     # url to index page
     host = "http://localhost:8080"
     
-    locust.stats.CSV_STATS_INTERVAL_SEC = 1 # default is 1 second
+    locust.stats.CSV_STATS_INTERVAL_SEC = 5 # default is 1 second
     locust.stats.CSV_STATS_FLUSH_INTERVAL_SEC = 10 # Determines how often the data is flushed to disk, default is 10 seconds
     #http://localhost:8080/wrk2-api/user/register
 
