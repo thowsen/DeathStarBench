@@ -37,9 +37,9 @@ function _M.AddInstance()
 end
 
 function _M.RemoveInstance()
+  local state = ngx.shared.state 
   ngx.req.read_body()
   local instance_to_be_removed = ngx.req.get_body_data()
-  local state = ngx.shared.state 
   state:delete(instance_to_be_removed)
   ngx.say(dump(state:get_keys()))
 end 
@@ -60,6 +60,15 @@ function _M.RegisterUser()
     intra_service_communication_on = 0
   end
 
+  local intra_service_instances= body_json["intra_service_instances"]
+  if intra_service_instances == nil then 
+    intra_service_instances = ""
+  end
+
+  local work_duration = body_json["work_duration"]
+  if work_duration == nil then 
+    work_duration = "0"
+  end
 
   local req_id = tonumber(string.sub(ngx.var.request_id, 0, 15), 16)
   local tracer = bridge_tracer.new_from_global()
@@ -105,8 +114,8 @@ function _M.RegisterUser()
   --end
 
   local client = GenericObjectPool:connection(UserServiceClient, "user-service" .. round_robin_instance ..k8s_suffix, 9090)
-  local status, err = pcall(client.RegisterUserWithId, client, req_id, post.first_name,
-      post.last_name, post.username, out_string, intra_service_communication_on, carrier)
+  local status, err = pcall(client.RegisterUserWithId, client, req_id, "aaaaaaa",
+      work_duration, intra_service_instances, out_string, intra_service_communication_on, carrier)
   if not status then
     ngx.status = ngx.HTTP_INTERNAL_SERVER_ERROR
     if (err.message) then
@@ -119,8 +128,12 @@ function _M.RegisterUser()
     client.iprot.trans:close()
     ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
   end
-
-  ngx.say("Success! " .. k8s_suffix)
+  if err then 
+    ngx.say("oh noes")
+    client.iprot.trans:close()
+    ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
+  end
+  ngx.say(round_robin_instance)
   GenericObjectPool:returnConnection(client)
   span:finish()
 end

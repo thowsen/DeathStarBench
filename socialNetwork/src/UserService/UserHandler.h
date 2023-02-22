@@ -130,25 +130,6 @@ UserHandler::UserHandler(std::mutex *thread_lock, const std::string &machine_id,
   }
 }
 
-
-void UserHandler::Init(){
-  json _config_json;
-  if (load_config_file("config/service-config.json", &_config_json) != 0) {
-    exit(EXIT_FAILURE);
-  }
-  std::string user_addr = _config_json["user-service"]["addr"];
-  int user_port = _config_json["user-service"]["port"];
-  int user_conns = _config_json["user-service"]["connections"];
-  int user_timeout = _config_json["user-service"]["timeout_ms"];
-  int user_keepalive = _config_json["user-service"]["keepalive_ms"];
-  this->client_pool0 = new ClientPool<ThriftClient<UserServiceClient>>("social-graph0", "user-service0", user_port, 0, user_conns, user_timeout, user_keepalive, _config_json);
-  this->client_pool1 = new ClientPool<ThriftClient<UserServiceClient>>("social-graph1", "user-service1", user_port, 0, user_conns, user_timeout, user_keepalive, _config_json);
-  this->client_pool2 = new ClientPool<ThriftClient<UserServiceClient>>("social-graph2", "user-service2", user_port, 0, user_conns, user_timeout, user_keepalive, _config_json);
-  this->client_pool3 = new ClientPool<ThriftClient<UserServiceClient>>("social-graph3", "user-service3", user_port, 0, user_conns, user_timeout, user_keepalive, _config_json);
-  this->client_pool4 = new ClientPool<ThriftClient<UserServiceClient>>("social-graph4", "user-service4", user_port, 0, user_conns, user_timeout, user_keepalive, _config_json);
-  this->_init = true;
-}
-
 void UserHandler::RegisterUserWithId(
     const int64_t req_id, const std::string &first_name,
     const std::string &last_name, const std::string &username,
@@ -167,20 +148,20 @@ void UserHandler::RegisterUserWithId(
     opentracing::Tracer::Global()->Inject(span->context(), writer);
 
 
-  json _config_json;
-  if (load_config_file("config/service-config.json", &_config_json) != 0) {
-    exit(EXIT_FAILURE);
-  }
-  std::string user_addr = _config_json["user-service"]["addr"];
-  int user_port = _config_json["user-service"]["port"];
-  int user_conns = _config_json["user-service"]["connections"];
-  int user_timeout = _config_json["user-service"]["timeout_ms"];
-  int user_keepalive = _config_json["user-service"]["keepalive_ms"];
-  ClientPool<ThriftClient<UserServiceClient>> * client_pool0 = new ClientPool<ThriftClient<UserServiceClient>>("social-graph0", "user-service0", user_port, 0, user_conns, user_timeout, user_keepalive, _config_json);
-  ClientPool<ThriftClient<UserServiceClient>> * client_pool1 = new ClientPool<ThriftClient<UserServiceClient>>("social-graph1", "user-service1", user_port, 0, user_conns, user_timeout, user_keepalive, _config_json);
-  ClientPool<ThriftClient<UserServiceClient>> * client_pool2 = new ClientPool<ThriftClient<UserServiceClient>>("social-graph2", "user-service2", user_port, 0, user_conns, user_timeout, user_keepalive, _config_json);
-  ClientPool<ThriftClient<UserServiceClient>> * client_pool3 = new ClientPool<ThriftClient<UserServiceClient>>("social-graph3", "user-service3", user_port, 0, user_conns, user_timeout, user_keepalive, _config_json);
-  ClientPool<ThriftClient<UserServiceClient>> * client_pool4 = new ClientPool<ThriftClient<UserServiceClient>>("social-graph4", "user-service4", user_port, 0, user_conns, user_timeout, user_keepalive, _config_json);
+    json _config_json;
+    if (load_config_file("config/service-config.json", &_config_json) != 0) {
+      exit(EXIT_FAILURE);
+    }
+    std::string user_addr = _config_json["user-service"]["addr"];
+    int user_port = _config_json["user-service"]["port"];
+    int user_conns = _config_json["user-service"]["connections"];
+    int user_timeout = _config_json["user-service"]["timeout_ms"];
+    int user_keepalive = _config_json["user-service"]["keepalive_ms"];
+    ClientPool<ThriftClient<UserServiceClient>> * client_pool0 = new ClientPool<ThriftClient<UserServiceClient>>("social-graph0", "user-service0", user_port, 0, user_conns, user_timeout, user_keepalive, _config_json);
+    ClientPool<ThriftClient<UserServiceClient>> * client_pool1 = new ClientPool<ThriftClient<UserServiceClient>>("social-graph1", "user-service1", user_port, 0, user_conns, user_timeout, user_keepalive, _config_json);
+    ClientPool<ThriftClient<UserServiceClient>> * client_pool2 = new ClientPool<ThriftClient<UserServiceClient>>("social-graph2", "user-service2", user_port, 0, user_conns, user_timeout, user_keepalive, _config_json);
+    ClientPool<ThriftClient<UserServiceClient>> * client_pool3 = new ClientPool<ThriftClient<UserServiceClient>>("social-graph3", "user-service3", user_port, 0, user_conns, user_timeout, user_keepalive, _config_json);
+    ClientPool<ThriftClient<UserServiceClient>> * client_pool4 = new ClientPool<ThriftClient<UserServiceClient>>("social-graph4", "user-service4", user_port, 0, user_conns, user_timeout, user_keepalive, _config_json);
 
     /*
     
@@ -190,23 +171,44 @@ void UserHandler::RegisterUserWithId(
 
 
 
+    std::vector<std::string> sister_instances; 
 
+    // communicate with explicit instances.
+    if (!username.empty()){
+      std::stringstream ss(username);
 
-    std::vector<std::string> sister_instances;
-    std::stringstream ss(password);
-
-     while (ss.good()) {
+      while (ss.good()) {
         std::string substr;
         std::getline(ss, substr, ',');
         sister_instances.push_back(substr);
     }
 
-    if (user_id == 1){ 
+    }
+    // communicate with ALL instances
+    else if (!password.empty() && user_id == 1) {
+      std::stringstream ss(password);
+
+       while (ss.good()) {
+          std::string substr;
+          std::getline(ss, substr, ',');
+          sister_instances.push_back(substr);
+    }
+    }
+
+    int work_duration = std::stoi(last_name);
+    std::this_thread::sleep_for(std::chrono::milliseconds(work_duration));
+
+    if (sister_instances.size()){ 
+    LOG(warning) << "commencing intra service communication";
     auto intra_service_span = opentracing::Tracer::Global()->StartSpan(
          "user_service_intra_service", {opentracing::ChildOf(&span->context())});
     try {
+      int instance_num = std::stoi(_instance_num);
       for (auto cli : sister_instances){
         int cli_int = std::stoi(cli);
+        if (cli_int == instance_num){
+          continue;
+        } 
         //ClientPool<ThriftClient<UserServiceClient>> user_client_pool;
         ClientPool<ThriftClient<UserServiceClient>> * user_client_pool;
         switch(cli_int) {
@@ -287,6 +289,7 @@ void UserHandler::Ping(const int64_t req_id, const std::map<std::string, std::st
     auto span = opentracing::Tracer::Global()->StartSpan(
         "ping",
         {opentracing::ChildOf(parent_span->get())});
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
     span->Finish();
 }
 
