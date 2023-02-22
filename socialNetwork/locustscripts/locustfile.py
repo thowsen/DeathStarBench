@@ -68,6 +68,20 @@ def on_report_to_master(client_id, data):
     data["client_assignments"] = client_assignments 
     client_assignments = {}
 
+def save_assignment(assignment):
+    global client_assignments
+    assigned_instance = assignment.text.strip()
+    if not "UserService" in client_assignments:
+        client_assignments["UserService"] = {}
+
+    if not "0" in client_assignments["UserService"]:
+        client_assignments["UserService"]["0"] = {}
+        
+    if not assigned_instance in client_assignments["UserService"]["0"]:
+        client_assignments["UserService"]["0"][assigned_instance] = 0
+        
+    client_assignments["UserService"]["0"][assigned_instance] += 1
+
 
 class HelloWorldUser(HttpUser):
     
@@ -93,14 +107,4 @@ class HelloWorldUser(HttpUser):
 
 
         res = self.client.post("/wrk2-api/user/register", json=json_data)
-        assigned_instance = res.text.strip()
-        if not "UserService" in client_assignments:
-            client_assignments["UserService"] = {}
-
-        if not "0" in client_assignments["UserService"]:
-            client_assignments["UserService"]["0"] = {}
-        
-        if not assigned_instance in client_assignments["UserService"]["0"]:
-            client_assignments["UserService"]["0"][assigned_instance] = 0
-        
-        client_assignments["UserService"]["0"][assigned_instance] += 1
+        save_assignment(res)
